@@ -244,7 +244,7 @@ public class GoalEntry : MonoBehaviour
 
     private void OnFootstep(AnimationEvent animationEvent) { }
     private void OnLand(AnimationEvent animationEvent) { }
-    private void OnTriggerEnter(Collider goal){
+    private void OnTriggerStay(Collider goal){
         GameObject aim = goal.GetComponent<GameObject>();
         script = this.GetComponent<ThirdPersonController>();
         other = this.GetComponent<Inventory>();
@@ -252,8 +252,8 @@ public class GoalEntry : MonoBehaviour
         script.enabled = true;
         other.enabled = true;
         nav.enabled = false;
+        Destroy(aim);
         this.enabled = false;
-        Destroy(goal);
     }
 }
 }
