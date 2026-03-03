@@ -751,7 +751,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: dashBuffer
-      value: 0.1
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: attackBuffer
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: dashCooldown
+      value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: specialBuffer
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: attackCooldown
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: specialCooldown
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: specialDuration
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399033260270733258, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: attackBuffer
@@ -1536,7 +1564,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9156729801926224790, guid: 55b9775b03a6503a48b267f863109cae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
