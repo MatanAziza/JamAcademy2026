@@ -7,10 +7,10 @@ using UnityEngine.InputSystem;
 
 namespace StarterAssets
 {
-    public class Collectible3D : MonoBehaviour
+    public class Spawner : MonoBehaviour
     {
         public float rotationSpeed = 0.5f;
-
+        public GameObject[] weapons;
         public bool isInteracting = false;
         public bool next_room = false;
         public bool pick_item = false;
@@ -39,12 +39,16 @@ namespace StarterAssets
             if (playerInput.interact)
             {
                 isInteracting = true;
+                GameObject gettableWeapon = weapons[Random.Range(0, weapons.Length)];
                 Debug.Log("Item récupéré");
                 Inventory inv = other.GetComponent<Inventory>();
                 Collider trigger = GetComponent<Collider>();
                 trigger.enabled = false;
-                inv.item2 = this.gameObject;
+                inv.item2 = gettableWeapon;
                 inv.item2.transform.localPosition = new Vector3(inv.xTranslation, inv.yTranslation, inv.zTranslation);
+                inv.ShowItem(2);
+                inv.currentSlot = 2;
+                Destroy(this.gameObject);
                 rotationSpeed = 0f;
                 isInteracting = false;
             }
