@@ -73,6 +73,7 @@ public class PlayerTimeManager : MonoBehaviour
         if (currentTime <= 0f)
         {
             currentTime = 0f;
+            Object.FindFirstObjectByType<PauseMenuManager>().TriggerDeath();
             Die();
         }
     }
@@ -84,19 +85,22 @@ public class PlayerTimeManager : MonoBehaviour
 
         Debug.Log("Temps écoulé ! GAME OVER.");
 
-        // On lance l'animation de mort (Assure-toi d'avoir un "Trigger" nommé "Death" dans ton Animator)
         if (_animator != null)
         {
             _animator.SetTrigger("Death");
         }
 
-        // On désactive le contrôle du joueur pour qu'il ne puisse plus bouger pendant qu'il meurt
+        // 1. On "éteint" le cerveau (le script de déplacement) pour arrêter les calculs inutiles
+        StarterAssets.ThirdPersonController movementScript = GetComponent<StarterAssets.ThirdPersonController>();
+        if (movementScript != null)
+        {
+            movementScript.enabled = false;
+        }
+
+        // 2. On éteint le corps physique
         if (_controller != null)
         {
             _controller.enabled = false;
         }
-        
-        // Optionnel : désactiver le script de déplacement des Starter Assets
-        // GetComponent<StarterAssets.ThirdPersonController>().enabled = false;
     }
 }
