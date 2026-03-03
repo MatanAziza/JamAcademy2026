@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5849209274747593967}
   - component: {fileID: 3504904874391786116}
   - component: {fileID: 7797898339946566924}
-  - component: {fileID: 4416957845645912660}
   m_Layer: 0
   m_Name: WeaponSpawner
   m_TagString: Untagged
@@ -134,23 +133,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.25870466, y: 0.22388539, z: 0.08411651}
   m_Center: {x: 0.0060784817, y: 0.0024093091, z: 0.03601449}
---- !u!114 &4416957845645912660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4506724130038910459}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d134fd65b9a7a90e58afbe20a9f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StarterAssets.Spawner
-  rotationSpeed: 0.5
-  weapons:
-  - {fileID: 919132149155446097, guid: ff02a0a00ab750f48b09459b1cafd1b8, type: 3}
-  - {fileID: 919132149155446097, guid: f712806514868e54699156ec05dcb749, type: 3}
-  isInteracting: 0
-  next_room: 0
-  pick_item: 0
-  dialog: 0
