@@ -29,11 +29,13 @@ namespace StarterAssets
             // Vérifie que l'autre est bien le joueur
             ThirdPersonController player = other.GetComponent<ThirdPersonController>();
             if (player == null) {
+                Debug.Log("haha");
                 return;
             }
 
             StarterAssetsInputs playerInput = player.GetComponent<StarterAssetsInputs>();
             if (playerInput == null){
+                Debug.Log("hahahahahaha");
                 return ;
             }
 

@@ -2319,7 +2319,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8350393840300722130}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -2348,11 +2348,11 @@ MonoBehaviour:
   jumpAttackDistance: 4
   attackCooldown: 2.5
   normalAttackDuration: 1
-  jumpAttackDuration: 1.5
+  jumpAttackDuration: 1
   MoveSpeed: 2
   RotationSmoothTime: 0.12
   SpeedChangeRate: 10
-  Gravity: -15
+  Gravity: -1
   Grounded: 1
   GroundedOffset: -0.14
   GroundedRadius: 0.28
