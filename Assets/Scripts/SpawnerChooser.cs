@@ -24,13 +24,23 @@ public class RandomSpawner : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
         {
             // Vérifie que l'autre est bien le joueur
             ThirdPersonController player = other.GetComponent<ThirdPersonController>();
-            if (player != null && GetComponent<Collider>().enabled && !spawned)
+            if (player == null){
+                Debug.Log("hihi");
+                return ;
+            }
+            StarterAssetsInputs playerInput = player.GetComponent<StarterAssetsInputs>();
+            if (playerInput == null){
+                Debug.Log("houhou");
+                return ;
+            }
+            if (playerInput.interact && player != null && GetComponent<Collider>().enabled && !spawned)
             {
                 spawned = true;
+                Debug.Log("hehe");
                 SpawnEnemies();
             }
         }

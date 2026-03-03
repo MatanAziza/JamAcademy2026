@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI; // NOUVEAU : On importe l'intelligence artificielle !
-
+namespace StarterAssets
+{
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(NavMeshAgent))] // Ajoute automatiquement l'agent s'il manque
-public class AnimatedEnemyAI : MonoBehaviour
+public class GoalEntry : MonoBehaviour
 {
     [Header("Cible & IA")]
     private Transform targetPlayer;
@@ -50,12 +51,16 @@ public class AnimatedEnemyAI : MonoBehaviour
 
     private Animator _animator;
     private CharacterController _controller;
+    private Inventory other;
+    private NavMeshAgent nav;
+    public ThirdPersonController script;
     private NavMeshAgent _agent; // NOUVEAU : Le cerveau IA
     private bool _hasAnimator;
 
     private void Start()
     {
-        targetPlayer = GameObject.Find("PlayerArmature").GetComponent<Transform>();
+        targetPlayer = GameObject.Find("GoalEntry").GetComponent<Transform>();
+
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _agent = GetComponent<NavMeshAgent>();
@@ -239,4 +244,16 @@ public class AnimatedEnemyAI : MonoBehaviour
 
     private void OnFootstep(AnimationEvent animationEvent) { }
     private void OnLand(AnimationEvent animationEvent) { }
+    private void OnTriggerEnter(Collider goal){
+        GameObject aim = goal.GetComponent<GameObject>();
+        script = this.GetComponent<ThirdPersonController>();
+        other = this.GetComponent<Inventory>();
+        nav = this.GetComponent<NavMeshAgent>();
+        script.enabled = true;
+        other.enabled = true;
+        nav.enabled = false;
+        this.enabled = false;
+        Destroy(goal);
+    }
+}
 }
