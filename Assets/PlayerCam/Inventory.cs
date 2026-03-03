@@ -77,7 +77,7 @@ public class Inventory : MonoBehaviour
         lastSwitch_state = _input.switch_item;
     }
 
-    void ShowItem(int slot)
+    public void ShowItem(int slot)
     {
         // Supprime l'ancien item affiché
         if (currentItem != null)
