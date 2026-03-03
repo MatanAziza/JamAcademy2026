@@ -1,4 +1,4 @@
-﻿ using UnityEngine;
+﻿using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -45,9 +45,6 @@ namespace StarterAssets
 
         // animation IDs
         private int _animIDSpeed;
-        private int _animIDGrounded;
-        private int _animIDJump;
-        private int _animIDFreeFall;
         private int _animIDMotionSpeed;
 
 #if ENABLE_INPUT_SYSTEM 
@@ -99,36 +96,78 @@ namespace StarterAssets
             AssignAnimationIDs();
         }
         
-        bool lastJumpState = false;
+        private bool lastDashState = false;
         public float dashSpeed = 5.0f;
-        public float dashDuration = 0.5f;  // Temps total du dash
-        public float dashCooldown = 2f;
 
+        public float dashDuration = 0.5f;
+        public float dashCooldown = 2f;
         private float dashTimer = 0f;
         private float cooldownTimer = 0f;
+        public float dashBuffer = 0.3f;
+
+        private bool isDashing = false;
+        private bool canDash = true;
         private Vector3 dashDirection;
-        private bool isDashing = false;  
-        private bool canDash = true;  
+
+        private bool lastAtkState = false;
+
+        public float attackDuration = 1f;
+        public float attackCooldown = 0.5f;
+        private float attackTimer = 0f;
+        private float attackCdTimer = 0f;
+        public float attackBuffer = 0.3f;
+
+        private bool isAttacking = false;  
+        private bool canAttack = true;
+        public float slowSpeed = 4f;
+
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
+            if (!canAttack){
+                attackCdTimer += Time.deltaTime;
+                if (attackCdTimer >= attackCooldown) {
+                    canAttack = true;
+                    attackCdTimer = 0f;
+                    lastAtkState = false;
+                }
+            }
             if (!canDash) {
                 cooldownTimer += Time.deltaTime;
                 if (cooldownTimer >= dashCooldown) {
                     canDash = true;
                     cooldownTimer = 0f;
-                    lastJumpState = false;
+                    lastDashState = false;
                 }
-                else {
-                    lastJumpState = _input.jump;
-                }
+            }
+            if (attackCdTimer != 0f && attackCdTimer < attackCooldown - attackBuffer){
+                _input.attack = false;
+            }
+            if (_input.attack!=lastAtkState && canAttack && !isAttacking)
+                Attack();
+            if (isAttacking) {
+                attackTimer += Time.deltaTime;
+
+                if (attackTimer > attackDuration) {
+                    isAttacking = false;
+                    attackTimer = 0f;
+                    canAttack = false;
+                    attackCdTimer = 0f;
+                    _input.attack = false;
+                    canDash = true;
+                    cooldownTimer = 0f;
+                    dashTimer = 0f;
+                    lastDashState = false;
+                    SprintSpeed *= slowSpeed;
+                } else
+                    Debug.Log("I Attack the enemy!");
             }
 
-            if (_input.jump!=lastJumpState && canDash && !isDashing) {
-                StartDash();
-            }
-    
-            if (isDashing) {
+            if (cooldownTimer != 0f && cooldownTimer < dashCooldown - dashBuffer)
+                _input.jump = false;
+            if (_input.jump!=lastDashState && canDash && !isDashing && !isAttacking){
+                StartDash();}
+            if (isDashing && !isAttacking) {
                 dashTimer += Time.deltaTime;
         
                 if (dashTimer > dashDuration) {
@@ -137,24 +176,37 @@ namespace StarterAssets
                     canDash = false;
                     cooldownTimer = 0f;
                     _input.jump = false;
-                } else {
-                    // move the player
+                } else{
                     _controller.Move(dashDirection * (dashSpeed * Time.deltaTime));
                 }
             }
             if (!isDashing)
                 Move();
-            lastJumpState = _input.jump;
+            lastAtkState = _input.attack;
+            lastDashState = _input.jump;
         }
 
-        private void AssignAnimationIDs()
-        {
-            _animIDSpeed = Animator.StringToHash("Speed");
-            _animIDGrounded = Animator.StringToHash("Grounded");
-            _animIDJump = Animator.StringToHash("Jump");
-            _animIDFreeFall = Animator.StringToHash("FreeFall");
-            _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        private void Attack() {
+            canDash = false;
+            isAttacking = true;
+            canAttack = false;
+            attackTimer = 0f;
+            SprintSpeed /= slowSpeed;
         }
+
+        private void StartDash() {
+            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            if (inputDirection != Vector3.zero){
+                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
+            dashDirection = transform.rotation * Vector3.forward;
+            isDashing = true;
+            dashTimer = 0f;
+            canDash = false;
+        }
+
         private void Move()
         {
             float targetSpeed = SprintSpeed;
@@ -174,9 +226,7 @@ namespace StarterAssets
                 _speed = Mathf.Round(_speed * 1000f) / 1000f;
             }
             else
-            {
                 _speed = targetSpeed;
-            }
 
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
@@ -185,11 +235,8 @@ namespace StarterAssets
 
             if (_input.move != Vector2.zero)
             {
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    RotationSmoothTime);
-
+                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
@@ -205,26 +252,12 @@ namespace StarterAssets
             }
         }
 
-        private void StartDash() {
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
-            if (inputDirection != Vector3.zero){
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            }
-            dashDirection = transform.rotation * Vector3.forward;
-            isDashing = true;
-            dashTimer = 0f;
-            canDash = false;
-            Debug.Log("dash direction = " + dashDirection);
+        private void AssignAnimationIDs()
+        {
+            _animIDSpeed = Animator.StringToHash("Speed");
+            _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
         }
 
-        private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-        {
-            if (lfAngle < -360f) lfAngle += 360f;
-            if (lfAngle > 360f) lfAngle -= 360f;
-            return Mathf.Clamp(lfAngle, lfMin, lfMax);
-        }
         private void OnFootstep(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
