@@ -6,7 +6,7 @@ using UnityEngine.AI; // NOUVEAU : On importe l'intelligence artificielle !
 public class AnimatedEnemyAI : MonoBehaviour
 {
     [Header("Cible & IA")]
-    public Transform targetPlayer;
+    private Transform targetPlayer;
     
     [Header("Portée des attaques")]
     public float normalAttackDistance = 1.5f; 
@@ -55,6 +55,7 @@ public class AnimatedEnemyAI : MonoBehaviour
 
     private void Start()
     {
+        targetPlayer = GameObject.Find("PlayerArmature").GetComponent<Transform>();
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _agent = GetComponent<NavMeshAgent>();
