@@ -46,6 +46,7 @@ namespace StarterAssets
                 GameObject gettableWeapon = weapons[Random.Range(0, weapons.Length)];
                 Debug.Log("Item récupéré");
                 Inventory inv = other.GetComponent<Inventory>();
+                //-----------------------------------------
                 Collider trigger = GetComponent<Collider>();
                 trigger.enabled = false;
                 inv.item2 = gettableWeapon;
@@ -53,6 +54,16 @@ namespace StarterAssets
                 inv.ShowItem(2);
                 inv.currentSlot = 2;
                 Destroy(this.gameObject);
+                //-----------------------------------------
+                InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
+                if (uiManager != null)
+                {
+                    // On désactive le collider pour éviter que le joueur spamme la touche
+                    GetComponent<Collider>().enabled = false;
+                    
+                    // On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
+                    uiManager.OpenLootWindow(gettableWeapon, this, inv);
+                }
                 rotationSpeed = 0f;
                 isInteracting = false;
             }
