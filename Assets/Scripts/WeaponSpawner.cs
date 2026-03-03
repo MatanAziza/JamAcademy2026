@@ -16,6 +16,7 @@ namespace StarterAssets
         public bool next_room = false;
         public bool pick_item = false;
         public bool dialog = false;
+        
 
         // Update is called once per frame
         void Update()
