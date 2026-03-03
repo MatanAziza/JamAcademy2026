@@ -12,6 +12,7 @@ namespace StarterAssets
         public float rotationSpeed = 0.5f;
         public GameObject[] weapons;
         public bool isInteracting = false;
+        private bool interactTimer;
         public bool next_room = false;
         public bool pick_item = false;
         public bool dialog = false;
@@ -36,7 +37,7 @@ namespace StarterAssets
             }
 
             // Collecte seulement si pas déjà collecté
-            if (playerInput.interact)
+            if (playerInput.interact && GetComponent<Collider>().enabled)
             {
                 isInteracting = true;
                 GameObject gettableWeapon = weapons[Random.Range(0, weapons.Length)];
