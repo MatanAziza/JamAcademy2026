@@ -21,7 +21,7 @@ public class Inventory : MonoBehaviour
 
     private GameObject currentItem;
     private StarterAssetsInputs _input;
-    private int currentSlot = 1;
+    public int currentSlot = 1;
     public float switchTime = 1f;
     public float switchTimer = 0f;
     public float switchCooldown = 3f;
@@ -97,7 +97,6 @@ public class Inventory : MonoBehaviour
             currentItem = Instantiate(itemToShow, hand);
             currentItem.transform.localPosition = new Vector3(xTranslation, yTranslation, zTranslation);
             Debug.Log("J'affiche l'item " + currentItem);
-            currentItem.transform.localRotation = Quaternion.identity;
         }
         canSwitch = false;
         isSwitching = true;
