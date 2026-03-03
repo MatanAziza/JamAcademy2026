@@ -11,6 +11,7 @@ namespace StarterAssets
 		public Vector2 move;
 		public Vector2 look;
 		public bool attack;
+		public bool special;
 		public bool jump;
 		public bool sprint;
 		public bool switch_item;
@@ -47,6 +48,11 @@ namespace StarterAssets
 			AttackInput(value.isPressed);
 		}
 
+		public void OnSpecial(InputValue value)
+		{
+			SpecialInput(value.isPressed);
+		}
+
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
@@ -81,6 +87,11 @@ namespace StarterAssets
 		public void AttackInput(bool newAttackState)
 		{
 			attack = newAttackState;
+		}
+
+		public void SpecialInput(bool newSpecialState)
+		{
+			special = newSpecialState;
 		}
 
 		public void SprintInput(bool newSprintState)

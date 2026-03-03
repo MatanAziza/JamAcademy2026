@@ -99,109 +99,120 @@ namespace StarterAssets
         }
         
         private bool lastDashState = false;
-        public float dashSpeed = 5.0f;
+        private bool lastAtkState = false;
+        private bool lastSpcState = false;
 
+        public float dashSpeed = 5.0f;
         public float dashDuration = 0.5f;
         public float dashCooldown = 2f;
         private float dashTimer = 0f;
-        private float cooldownTimer = 0f;
         public float dashBuffer = 0.3f;
-
-        public bool isDashing = false;
-        private bool canDash = true;
         private Vector3 dashDirection;
 
-        private bool lastAtkState = false;
-
+        public float slowSpeed = 4f;
         public float attackDuration = 1f;
         public float attackCooldown = 0.5f;
         private float attackTimer = 0f;
-        private float attackCdTimer = 0f;
         public float attackBuffer = 0.3f;
 
+        public float superSlowSpeed = 6f;
+        public float specialDuration = 2f;
+        public float specialCooldown = 1.2f;
+        private float specialTimer = 0f;
+        public float specialBuffer = 0.1f;
+
+        public bool isDashing = false;
+        private bool canDash = true;
         public bool isAttacking = false;  
         private bool canAttack = true;
-        public float slowSpeed = 4f;
+        public bool isSpecialing = false;
+        private bool canSpecial = true;
 
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-            if (!canAttack){
-                attackCdTimer += Time.deltaTime;
-                if (attackCdTimer >= attackCooldown) {
-                    canAttack = true;
-                    attackCdTimer = 0f;
-                    lastAtkState = false;
-                }
-            }
-            if (!canDash) {
-                cooldownTimer += Time.deltaTime;
-                if (cooldownTimer >= dashCooldown) {
-                    canDash = true;
-                    cooldownTimer = 0f;
-                    lastDashState = false;
-                }
-            }
-            if (attackCdTimer != 0f && attackCdTimer < attackCooldown - attackBuffer){
-                _input.attack = false;
-            }
-            if (_input.attack!=lastAtkState && canAttack && !isAttacking)
+            if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing){
+                Debug.Log("J'attaque");
                 Attack();
-            if (isAttacking) {
+            }
+            if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
+                Debug.Log("Je special");
+                Special();
+            }
+            if (_input.jump != lastDashState && canDash && !isDashing && !isAttacking && !isSpecialing){
+                Debug.Log("Je dash");
+                StartDash();
+            }
+            if (isAttacking)
                 attackTimer += Time.deltaTime;
-
-                if (attackTimer > attackDuration) {
-                    isAttacking = false;
-                    attackTimer = 0f;
-                    canAttack = false;
-                    attackCdTimer = 0f;
-                    _input.attack = false;
-                    canDash = true;
-                    cooldownTimer = 0f;
-                    dashTimer = 0f;
-                    lastDashState = false;
-                    _inventory.canSwitch = true;
-                    _inventory.switchCdTimer = 0f;
-                    _inventory.switchTimer = 0f;
-                    _inventory.lastSwitch_state = false;
-                    SprintSpeed *= slowSpeed;
-                } else
-                    Debug.Log("I Attack the enemy!");
-            }
-
-            if (cooldownTimer != 0f && cooldownTimer < dashCooldown - dashBuffer)
-                _input.jump = false;
-            if (_input.jump!=lastDashState && canDash && !isDashing && !isAttacking){
-                StartDash();}
-            if (isDashing && !isAttacking) {
+            if (isSpecialing)
+                specialTimer += Time.deltaTime;
+            if (isDashing)
                 dashTimer += Time.deltaTime;
-        
-                if (dashTimer > dashDuration) {
-                    isDashing = false;
-                    dashTimer = 0f;
-                    canDash = false;
-                    cooldownTimer = 0f;
-                    _input.jump = false;
-                    _inventory.canSwitch = true;
-                    _inventory.switchCdTimer = 0f;
-                    _inventory.switchTimer = 0f;
-                    _inventory.lastSwitch_state = false;
-                } else{
-                    _controller.Move(dashDirection * (dashSpeed * Time.deltaTime));
-                }
+            if (attackTimer < attackDuration - attackBuffer || specialTimer < specialDuration - specialCooldown || dashTimer < dashDuration - dashCooldown){
+                _input.attack = false;
+                _input.special = false;
+                _input.jump = false;
             }
-            if (!isDashing)
+            if (dashTimer < dashDuration)
+                _controller.Move(dashDirection * (dashSpeed * Time.deltaTime));
+            if (attackTimer >= attackDuration - attackBuffer && isAttacking){
+                isAttacking = false;
+                SprintSpeed *= slowSpeed;
+                _inventory.canSwitch = true;
+                _inventory.switchCdTimer = 0f;
+                _inventory.switchTimer = 0f;
+                _inventory.lastSwitch_state = false;
+            }
+            if (specialTimer >= specialDuration - specialBuffer && isSpecialing){
+                isSpecialing = false;
+                SprintSpeed *= superSlowSpeed;
+                _inventory.canSwitch = true;
+                _inventory.switchCdTimer = 0f;
+                _inventory.switchTimer = 0f;
+                _inventory.lastSwitch_state = false;
+            }
+            if (dashTimer >= dashDuration - dashBuffer && isDashing){
+                isDashing = false;
+                _inventory.canSwitch = true;
+                _inventory.switchCdTimer = 0f;
+                _inventory.switchTimer = 0f;
+                _inventory.lastSwitch_state = false;
+            }
+            if (!isAttacking && !canAttack && attackTimer + attackDuration < attackCooldown)
+                attackTimer += Time.deltaTime;
+            if (!isSpecialing && !canSpecial && specialTimer + specialDuration < specialCooldown)
+                specialTimer += Time.deltaTime;
+            if (!isDashing && !canDash && dashTimer + dashDuration < dashCooldown)
+                dashTimer += Time.deltaTime;
+            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown)
+                canAttack = true;
+            if (!isSpecialing && !canSpecial && specialTimer + specialDuration >= specialCooldown)
+                canSpecial = true;
+            if (!isDashing && !canDash && dashTimer + dashDuration >= dashCooldown)
+                canDash =true;
+            if (!isDashing){
                 Move();
+            }
             lastAtkState = _input.attack;
+            lastSpcState = _input.special;
             lastDashState = _input.jump;
+        }
+        private void Special(){
+            isSpecialing = true;
+            canSpecial = false;
+            specialTimer = 0f;
+            _inventory.canSwitch = false;
+            //animation
+            SprintSpeed /= superSlowSpeed;
         }
 
         private void Attack() {
-            canDash = false;
-            _inventory.canSwitch = false;
             isAttacking = true;
             canAttack = false;
             attackTimer = 0f;
+            _inventory.canSwitch = false;
+            //animation
             SprintSpeed /= slowSpeed;
         }
 
@@ -214,9 +225,9 @@ namespace StarterAssets
             }
             dashDirection = transform.rotation * Vector3.forward;
             isDashing = true;
-            _inventory.canSwitch = false;
-            dashTimer = 0f;
             canDash = false;
+            dashTimer = 0f;
+            _inventory.canSwitch = false;
         }
 
         private void Move()
