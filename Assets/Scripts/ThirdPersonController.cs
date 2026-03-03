@@ -118,7 +118,7 @@ namespace StarterAssets
         public float superSlowSpeed = 6f;
         public float specialDuration = 2f;
         public float specialCooldown = 1.2f;
-        private float specialTimer = 0f;
+        public float specialTimer = 0f;
         public float specialBuffer = 0.1f;
 
         public bool isDashing = false;
@@ -149,7 +149,8 @@ namespace StarterAssets
                 specialTimer += Time.deltaTime;
             if (isDashing)
                 dashTimer += Time.deltaTime;
-            if (attackTimer < attackDuration - attackBuffer || specialTimer < specialDuration - specialCooldown || dashTimer < dashDuration - dashCooldown){
+                // maybe below
+            if (attackTimer < attackDuration - attackBuffer|| specialTimer < specialDuration - specialBuffer || dashTimer < dashDuration - dashBuffer){
                 _input.attack = false;
                 _input.special = false;
                 _input.jump = false;
@@ -185,8 +186,9 @@ namespace StarterAssets
                 specialTimer += Time.deltaTime;
             if (!isDashing && !canDash && dashTimer + dashDuration < dashCooldown)
                 dashTimer += Time.deltaTime;
-            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown)
+            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown){
                 canAttack = true;
+                Debug.Log("merde");}
             if (!isSpecialing && !canSpecial && specialTimer + specialDuration >= specialCooldown)
                 canSpecial = true;
             if (!isDashing && !canDash && dashTimer + dashDuration >= dashCooldown)

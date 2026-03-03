@@ -1002,12 +1002,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: dashTimer
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: dashBuffer
-      value: 0.05
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: attackTimer
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: attackBuffer
@@ -1018,12 +1026,24 @@ PrefabInstance:
       value: 1.15
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: dashDuration
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: specialTimer
+      value: 3.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: specialBuffer
       value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: attackCooldown
       value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
+      propertyPath: superSlowSpeed
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7372347025863365807, guid: f88d33877e3b56a9e956fd7d082ef6b2, type: 3}
       propertyPath: specialCooldown
