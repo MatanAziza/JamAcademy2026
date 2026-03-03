@@ -29,18 +29,15 @@ public class RandomSpawner : MonoBehaviour
             // Vérifie que l'autre est bien le joueur
             ThirdPersonController player = other.GetComponent<ThirdPersonController>();
             if (player == null){
-                Debug.Log("hihi");
-                return ;
+                return;
             }
             StarterAssetsInputs playerInput = player.GetComponent<StarterAssetsInputs>();
             if (playerInput == null){
-                Debug.Log("houhou");
-                return ;
+                return;
             }
-            if (playerInput.interact && player != null && GetComponent<Collider>().enabled && !spawned)
+            if (playerInput.interact && player != null && !spawned)
             {
                 spawned = true;
-                Debug.Log("hehe");
                 SpawnEnemies();
             }
         }
