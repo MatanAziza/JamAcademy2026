@@ -204,9 +204,8 @@ namespace StarterAssets
                 specialTimer += Time.deltaTime;
             if (!isDashing && !canDash && dashTimer + dashDuration < dashCooldown)
                 dashTimer += Time.deltaTime;
-            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown){
+            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown)
                 canAttack = true;
-                Debug.Log("merde");}
             if (!isSpecialing && !canSpecial && specialTimer + specialDuration >= specialCooldown)
                 canSpecial = true;
             if (!isDashing && !canDash && dashTimer + dashDuration >= dashCooldown)
