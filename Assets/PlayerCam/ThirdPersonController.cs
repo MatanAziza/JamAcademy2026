@@ -54,6 +54,7 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
+        private Inventory _inventory;
 
         private const float _threshold = 0.01f;
 
@@ -89,6 +90,7 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
+            _inventory = GetComponent<Inventory>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -105,7 +107,7 @@ namespace StarterAssets
         private float cooldownTimer = 0f;
         public float dashBuffer = 0.3f;
 
-        private bool isDashing = false;
+        public bool isDashing = false;
         private bool canDash = true;
         private Vector3 dashDirection;
 
@@ -117,7 +119,7 @@ namespace StarterAssets
         private float attackCdTimer = 0f;
         public float attackBuffer = 0.3f;
 
-        private bool isAttacking = false;  
+        public bool isAttacking = false;  
         private bool canAttack = true;
         public float slowSpeed = 4f;
 
@@ -158,6 +160,10 @@ namespace StarterAssets
                     cooldownTimer = 0f;
                     dashTimer = 0f;
                     lastDashState = false;
+                    _inventory.canSwitch = true;
+                    _inventory.switchCdTimer = 0f;
+                    _inventory.switchTimer = 0f;
+                    _inventory.lastSwitch_state = false;
                     SprintSpeed *= slowSpeed;
                 } else
                     Debug.Log("I Attack the enemy!");
@@ -176,6 +182,10 @@ namespace StarterAssets
                     canDash = false;
                     cooldownTimer = 0f;
                     _input.jump = false;
+                    _inventory.canSwitch = true;
+                    _inventory.switchCdTimer = 0f;
+                    _inventory.switchTimer = 0f;
+                    _inventory.lastSwitch_state = false;
                 } else{
                     _controller.Move(dashDirection * (dashSpeed * Time.deltaTime));
                 }
@@ -188,6 +198,7 @@ namespace StarterAssets
 
         private void Attack() {
             canDash = false;
+            _inventory.canSwitch = false;
             isAttacking = true;
             canAttack = false;
             attackTimer = 0f;
@@ -203,6 +214,7 @@ namespace StarterAssets
             }
             dashDirection = transform.rotation * Vector3.forward;
             isDashing = true;
+            _inventory.canSwitch = false;
             dashTimer = 0f;
             canDash = false;
         }

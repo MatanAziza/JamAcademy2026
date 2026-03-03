@@ -23,15 +23,20 @@ public class Inventory : MonoBehaviour
     private StarterAssetsInputs _input;
     private int currentSlot = 1;
     public float switchTime = 1f;
+    public float switchTimer = 0f;
     public float switchCooldown = 3f;
-    private float switchCdTimer;
-    private bool canSwitch = true;
-    private bool lastSwitch_state;
+    public float switchBuffer = 0.1f;
+    public float switchCdTimer;
+    public bool canSwitch = true;
+    public bool isSwitching = false;
+    public bool lastSwitch_state;
+    private ThirdPersonController player;
 
     private void Start()
     {
         ShowItem(currentSlot);
         _input = GetComponent<StarterAssetsInputs>();
+		player = GetComponent<ThirdPersonController>();
     }
 
     void Update()
@@ -43,10 +48,10 @@ public class Inventory : MonoBehaviour
                     switchCdTimer = 0f;
                 }
             }
-        if (switchCdTimer != 0f){
+        if (switchCdTimer != 0f && switchCdTimer < switchCooldown - switchBuffer){
             _input.switch_item = false;
         }
-        if (_input.switch_item != lastSwitch_state && currentSlot == 2 && canSwitch)
+        if (_input.switch_item != lastSwitch_state && currentSlot == 2 && canSwitch && !player.isDashing && !player.isAttacking)
         {
             currentSlot = 1;
             ShowItem(currentSlot);
@@ -57,6 +62,12 @@ public class Inventory : MonoBehaviour
             currentSlot = 2;
             ShowItem(currentSlot);
         }
+        if (isSwitching) {
+                switchTimer += Time.deltaTime;
+
+                if (switchTimer > switchTime)
+                    isSwitching = false;
+            }
         lastSwitch_state = _input.switch_item;
     }
 
@@ -83,6 +94,7 @@ public class Inventory : MonoBehaviour
             currentItem.transform.localRotation = Quaternion.identity;
         }
         canSwitch = false;
+        isSwitching = true;
     }
 }
 }
