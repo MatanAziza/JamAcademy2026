@@ -30,6 +30,12 @@ public class Inventory : MonoBehaviour
     public bool canSwitch = true;
     public bool isSwitching = false;
     public bool lastSwitch_state;
+    [Range(-0.5f, 0.5f)]
+    public float xTranslation;
+    [Range(-0.5f, 0.5f)]
+    public float yTranslation;
+    [Range(-0.5f, 0.5f)]
+    public float zTranslation;
     private ThirdPersonController player;
 
     private void Start()
@@ -89,8 +95,8 @@ public class Inventory : MonoBehaviour
         if (itemToShow != null)
         {
             currentItem = Instantiate(itemToShow, hand);
+            currentItem.transform.localPosition = new Vector3(xTranslation, yTranslation, zTranslation);
             Debug.Log("J'affiche l'item " + currentItem);
-            currentItem.transform.localPosition = Vector3.zero;
             currentItem.transform.localRotation = Quaternion.identity;
         }
         canSwitch = false;
