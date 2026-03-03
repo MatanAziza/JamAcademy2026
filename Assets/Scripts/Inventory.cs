@@ -79,27 +79,52 @@ public class Inventory : MonoBehaviour
 
     public void ShowItem(int slot)
     {
-        // Supprime l'ancien item affiché
-        if (currentItem != null)
-        {
-            Destroy(currentItem);
-        }
+        // ... (leur code pour détruire l'ancien item) ...
 
         GameObject itemToShow = null;
-
-        if (slot == 1)
-            itemToShow = item1;
-        else if (slot == 2)
-            itemToShow = item2;
+        if (slot == 1) itemToShow = item1;
+        else if (slot == 2) itemToShow = item2;
 
         if (itemToShow != null)
         {
             currentItem = Instantiate(itemToShow, hand);
             currentItem.transform.localPosition = new Vector3(xTranslation, yTranslation, zTranslation);
-            Debug.Log("J'affiche l'item " + currentItem);
+            
+            // ---> TA LIGNE DE DEBUG ICI <---
+            Debug.Log("ÉQUIPEMENT ACTUEL : Le slot " + slot + " contient l'arme [" + itemToShow.name + "]");
         }
+        else
+        {
+            Debug.Log("ÉQUIPEMENT ACTUEL : Le slot " + slot + " est VIDE (Mains nues)");
+        }
+        
         canSwitch = false;
         isSwitching = true;
     }
+
+    // public void ShowItem(int slot)
+    // {
+    //     // Supprime l'ancien item affiché
+    //     if (currentItem != null)
+    //     {
+    //         Destroy(currentItem);
+    //     }
+
+    //     GameObject itemToShow = null;
+
+    //     if (slot == 1)
+    //         itemToShow = item1;
+    //     else if (slot == 2)
+    //         itemToShow = item2;
+
+    //     if (itemToShow != null)
+    //     {
+    //         currentItem = Instantiate(itemToShow, hand);
+    //         currentItem.transform.localPosition = new Vector3(xTranslation, yTranslation, zTranslation);
+    //         Debug.Log("J'affiche l'item " + currentItem);
+    //     }
+    //     canSwitch = false;
+    //     isSwitching = true;
+    // }
 }
 }

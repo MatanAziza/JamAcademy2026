@@ -5,11 +5,11 @@ using TMPro;
 public class RebindButton : MonoBehaviour
 {
     [Header("Liaison avec le Joueur")]
-    public PlayerInput playerInput; // Le composant du joueur qui contient le "clone" des touches
+    public PlayerInput playerInput;
 
     [Header("Quelle action modifier ?")]
-    public string actionName = "Move"; // Le nom de l'action (ex: "Move", "Jump", "Interact")
-    public int bindingIndex = 2; // 2 = Avancer, 3 = Reculer, 4 = Gauche, 5 = Droite
+    public string actionName; 
+    public int bindingIndex;  
 
     [Header("UI")]
     public TextMeshProUGUI buttonText;
@@ -19,16 +19,13 @@ public class RebindButton : MonoBehaviour
 
     void Start()
     {
-        // 1. Si on a oublié de lier le joueur, le script le cherche tout seul !
         if (playerInput == null)
         {
-            Object.FindFirstObjectByType<PlayerInput>();
+            playerInput = Object.FindFirstObjectByType<PlayerInput>();
         }
 
-        // 2. On récupère l'action directement depuis le cerveau du joueur (le clone)
         actionToRebind = playerInput.actions.FindAction(actionName);
 
-        // 3. Charger les touches sauvegardées
         string savedRebinds = PlayerPrefs.GetString("rebinds", string.Empty);
         if (!string.IsNullOrEmpty(savedRebinds))
         {
@@ -47,7 +44,9 @@ public class RebindButton : MonoBehaviour
         rebindingOperation = actionToRebind.PerformInteractiveRebinding(bindingIndex)
             .WithControlsExcluding("<Mouse>/position")
             .WithControlsExcluding("<Mouse>/delta")
-            .OnComplete(operation => RebindComplete())
+            .WithCancelingThrough("<Keyboard>/escape") 
+            .OnComplete(operation => RebindComplete()) 
+            .OnCancel(operation => RebindComplete())   
             .Start();
     }
 
@@ -56,30 +55,55 @@ public class RebindButton : MonoBehaviour
         UpdateUI();
         rebindingOperation.Dispose();
 
-        actionToRebind.Enable();
+        actionToRebind.Enable(); 
 
-        // On sauvegarde pour la prochaine fois
         string rebinds = playerInput.actions.SaveBindingOverridesAsJson();
         PlayerPrefs.SetString("rebinds", rebinds);
     }
 
-private void UpdateUI()
+    // --- LA NOUVELLE FONCTION DE RESET ---
+    public void ResetAllBindings()
     {
-        // 1. On récupère le nom brut donné par Unity (ex: "W", "E", "Space")
-        string keyName = InputControlPath.ToHumanReadableString(
+        // 1. On supprime la sauvegarde des touches personnalisées
+        PlayerPrefs.DeleteKey("rebinds");
+
+        // 2. On force le système à oublier toutes les modifications
+        playerInput.actions.RemoveAllBindingOverrides();
+
+        // 3. On cherche tous les boutons de rebinding à l'écran pour rafraîchir leur texte
+        RebindButton[] allButtons = Object.FindObjectsByType<RebindButton>(FindObjectsSortMode.None);
+        foreach (RebindButton btn in allButtons)
+        {
+            btn.UpdateUI();
+        }
+    }
+
+    // Attention : UpdateUI est passé en "public" pour que le Reset puisse l'appeler
+    public void UpdateUI()
+    {
+        if (actionToRebind == null) return;
+
+        string rawKeyName = InputControlPath.ToHumanReadableString(
             actionToRebind.bindings[bindingIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
 
-        // 2. LA TRICHE ESTHÉTIQUE : Si Unity dit "Space", on le force à dire "_"
-        if (keyName == "Space")
-        {
-            keyName = "_";
-        }
-        
-        // (Bonus : Tu peux ajouter d'autres règles ici plus tard si besoin !)
-        // if (keyName == "Left Button") keyName = "Clic";
+        buttonText.text = FormatKeyName(rawKeyName);
+    }
 
-        // 3. On applique le texte final sur le bouton
-        buttonText.text = keyName;
+    public string FormatKeyName(string rawKeyName)
+    {
+        if (rawKeyName.Contains("Left Button") || rawKeyName == "Mouse0" || rawKeyName == "LMB")
+            return "LEFT CLICK";
+            
+        if (rawKeyName.Contains("Right Button") || rawKeyName == "Mouse1" || rawKeyName == "RMB")
+            return "RIGHT CLICK";
+            
+        if (rawKeyName.ToLower() == "space")
+            return "SPACE";
+            
+        if (rawKeyName.ToLower() == "tab")
+            return "TAB";
+
+        return rawKeyName.ToUpper();
     }
 }
