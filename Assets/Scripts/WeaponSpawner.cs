@@ -36,6 +36,9 @@ namespace StarterAssets
             if (playerInput == null){
                 return ;
             }
+            Debug.Log("Quelque chose touche le spawner : " + other.name); // AJOUTE ÇA
+    
+    // ... le reste du code (ThirdPersonController player = ...)
 
             // Collecte seulement si pas déjà collecté
             if (playerInput.interact && GetComponent<Collider>().enabled )
@@ -45,13 +48,13 @@ namespace StarterAssets
                 Debug.Log("Item récupéré");
                 Inventory inv = other.GetComponent<Inventory>();
                 //-----------------------------------------
-                Collider trigger = GetComponent<Collider>();
-                trigger.enabled = false;
-                inv.item2 = gettableWeapon;
-                inv.item2.transform.localPosition = new Vector3(inv.xTranslation, inv.yTranslation, inv.zTranslation);
-                inv.ShowItem(2);
-                inv.currentSlot = 2;
-                Destroy(this.gameObject);
+                // Collider trigger = GetComponent<Collider>();
+                // trigger.enabled = false;
+                // inv.item2 = gettableWeapon;
+                // inv.item2.transform.localPosition = new Vector3(inv.xTranslation, inv.yTranslation, inv.zTranslation);
+                // inv.ShowItem(2);
+                // inv.currentSlot = 2;
+                // Destroy(this.gameObject);
                 //-----------------------------------------
                 // InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
                 // if (uiManager != null)
@@ -59,9 +62,14 @@ namespace StarterAssets
                 //     // On désactive le collider pour éviter que le joueur spamme la touche
                 //     GetComponent<Collider>().enabled = false;
                     
-                //     // On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
-                //     uiManager.OpenLootWindow(gettableWeapon, this, inv);
-                // }
+                    // On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
+                    uiManager.OpenLootWindow(gettableWeapon, this, inv);
+                }
+                else
+                {
+                    // Si tu vois ça dans la console, c'est que le script InventoryUIManager n'est pas sur un objet de la scène !
+                    Debug.LogError("CRITIQUE : InventoryUIManager est introuvable dans la scène !"); 
+                }
                 rotationSpeed = 0f;
                 isInteracting = false;
             }
