@@ -14,6 +14,7 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 		public bool switch_item;
+		public bool interact;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -51,6 +52,12 @@ namespace StarterAssets
 			SprintInput(value.isPressed);
 		}
 
+
+		public void OnInteract(InputValue value)
+		{
+			InteractInput(value.isPressed);
+		}
+
 		public void OnSwitch(InputValue value){
 			SwitchInput(value.isPressed);}
 #endif
@@ -84,6 +91,11 @@ namespace StarterAssets
 		public void SwitchInput(bool newSwitchState)
 		{
 			switch_item = newSwitchState;
+		}
+
+		public void InteractInput(bool newInteractState)
+		{
+			interact = newInteractState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
