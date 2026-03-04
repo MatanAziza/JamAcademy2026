@@ -58,13 +58,13 @@ namespace StarterAssets
                 Destroy(this.gameObject);
                 //-----------------------------------------
                 InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
-                // if (uiManager != null)
-                // {
-                //     // On désactive le collider pour éviter que le joueur spamme la touche
-                //     GetComponent<Collider>().enabled = false;
+                if (uiManager != null)
+                {
+                    // On désactive le collider pour éviter que le joueur spamme la touche
+                    GetComponent<Collider>().enabled = false;
                     
                     //On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
-                    uiManager.OpenLootWindow(gettableWeapon, this, inv);
+                        uiManager.OpenLootWindow(gettableWeapon, this, inv);
                 }
                 else
                 {

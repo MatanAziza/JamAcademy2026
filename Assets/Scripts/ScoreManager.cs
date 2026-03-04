@@ -16,31 +16,27 @@ public class ScoreManager : MonoBehaviour
 
     private void Awake()
     {
-        // Mise en place du Singleton
-        if (instance == null) {
+        if (instance == null)
+        {
             instance = this;
-        } else {
+            DontDestroyOnLoad(gameObject); 
+        }
+        else
+        {
             Destroy(gameObject);
         }
     }
 
-    // --- FONCTIONS POUR COMPTER ---
-
     public void AddEnemyKill()
     {
         enemiesDefeated++;
-        // Debug.Log("Ennemi tué ! Total : " + enemiesDefeated);
     }
 
     public void AddHitReceived()
     {
         hitsReceived++;
-        // Debug.Log("Coup reçu ! Total : " + hitsReceived);
     }
 
-    // --- CALCUL FINAL (À appeler à la fin du niveau) ---
-
-// On ajoute "out bool isNewHighScore" pour que la fonction nous dise si on a battu le record
     public int CalculateFinalScore(float remainingTime, out bool isNewHighScore)
     {
         int timeScore = Mathf.RoundToInt(remainingTime) * pointsPerSecond;
@@ -48,15 +44,14 @@ public class ScoreManager : MonoBehaviour
         int hitPenalty = hitsReceived * penaltyPerHit;
 
         int finalScore = timeScore + enemyScore - hitPenalty;
-        if (finalScore < 0) finalScore = 0; // Pas de score négatif
+        if (finalScore < 0) finalScore = 0;
 
-        // --- GESTION DU HIGH SCORE ---
-        int currentHighScore = PlayerPrefs.GetInt("HighScore", 0); // Récupère l'ancien record (0 par défaut)
+        int currentHighScore = PlayerPrefs.GetInt("HighScore", 0);
         
         if (finalScore > currentHighScore)
         {
             isNewHighScore = true;
-            PlayerPrefs.SetInt("HighScore", finalScore); // On sauvegarde le nouveau record
+            PlayerPrefs.SetInt("HighScore", finalScore);
             PlayerPrefs.Save();
         }
         else
@@ -67,7 +62,6 @@ public class ScoreManager : MonoBehaviour
         return finalScore;
     }
 
-    // Petite fonction utilitaire pour lire le record n'importe quand
     public int GetHighScore()
     {
         return PlayerPrefs.GetInt("HighScore", 0);

@@ -38,6 +38,27 @@ public class Inventory : MonoBehaviour
     public float zTranslation;
     private ThirdPersonController player;
 
+    private void Awake()
+    {
+        // 1. On rend le joueur persistant entre les scènes
+        DontDestroyOnLoad(this.gameObject);
+
+        // 2. Sécurité anti-doublon (très important pour les tests)
+        // Si on arrive dans une scène qui a déjà un joueur placé à la main, 
+        // on garde celui qui vient de la scène précédente et on détruit le nouveau.
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length > 1)
+        {
+            foreach (GameObject p in players)
+            {
+                if (p != this.gameObject)
+                {
+                    Destroy(p);
+                }
+            }
+        }
+    }
+    
     private void Start()
     {
         ShowItem(currentSlot);

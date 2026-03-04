@@ -1810,7 +1810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   gameSceneName: Cam&Moves
-  tutorialSceneName: Tutorial_Level
+  tutorialSceneName: 
   mainMenuPanel: {fileID: 179141035}
   settingsPanel: {fileID: 1234754992}
 --- !u!4 &2057568049
