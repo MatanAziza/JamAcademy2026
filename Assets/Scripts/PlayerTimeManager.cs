@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerTimeManager : MonoBehaviour
 {
@@ -15,6 +16,27 @@ public class PlayerTimeManager : MonoBehaviour
     public float pulseSpeed = 5f;
     public float maxAlpha = 0.5f;
 
+    [Header("Menus (pour bloquer l'effet rouge)")]
+    public GameObject pauseMenuPanel;
+    public GameObject helperMessagePanel;
+
+    void OnEnable() { SceneManager.sceneLoaded += OnLevelFinishedLoading; }
+    void OnDisable() { SceneManager.sceneLoaded -= OnLevelFinishedLoading; }
+
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        // On retrouve la vignette de danger
+        GameObject vignetteObj = GameObject.Find("DangerVignette");
+        if (vignetteObj != null) 
+        {
+            dangerVignette = vignetteObj.GetComponent<UnityEngine.UI.Image>();
+        }
+
+        // On reconnecte les panneaux de blocage (Pause, etc.)
+        pauseMenuPanel = GameObject.Find("PauseMenuPanel");
+        helperMessagePanel = GameObject.Find("HelperMessagePanel");
+    }
+
     void Start()
     {
         // On récupère les composants du joueur
@@ -24,9 +46,15 @@ public class PlayerTimeManager : MonoBehaviour
 
     void Update()
     {
+        // --- GESTION DE L'EFFET DE DANGER ---
         if (dangerVignette != null)
         {
-            if (currentTime <= dangerTimeThreshold && !isDead && Time.timeScale > 0f)
+            // On vérifie si un des menus est actuellement allumé à l'écran
+            bool isMenuOpen = false;
+            if (pauseMenuPanel != null && pauseMenuPanel.activeInHierarchy) isMenuOpen = true;
+            if (helperMessagePanel != null && helperMessagePanel.activeInHierarchy) isMenuOpen = true;
+
+            if (currentTime <= dangerTimeThreshold && !isDead && Time.timeScale > 0f && !isMenuOpen)
             {
                 // Mathf.Sin crée une vague entre -1 et 1. On la remet entre 0 et 1.
                 float pulse = (Mathf.Sin(Time.unscaledTime * pulseSpeed) + 1f) / 2f;
@@ -36,15 +64,15 @@ public class PlayerTimeManager : MonoBehaviour
             }
             else
             {
-                // On s'assure que l'effet est totalement invisible si tout va bien (ou si le joueur est mort)
+                // On s'assure que l'effet est totalement invisible si tout va bien (ou si un menu est ouvert)
                 dangerVignette.color = new Color(1f, 0f, 0f, 0f);
             }
         }
+
         if (isDead) return;
 
         // Le temps s'écoule naturellement (1 seconde par seconde)
         currentTime -= Time.deltaTime;
-        // --- Pulsating Effect ---
 
         // Si le temps tombe à zéro ou en dessous, c'est la mort
         if (currentTime <= 0f)
@@ -70,9 +98,6 @@ public class PlayerTimeManager : MonoBehaviour
     public bool TryUseWeapon(float timeCost)
     {
         if (isDead) return false;
-
-        // Optionnel : Empêcher de tirer si le coût nous tue instantanément
-        // if (currentTime - timeCost <= 0) return false; 
 
         ModifyTime(-timeCost);
         return true; // Le tir est autorisé
@@ -108,8 +133,7 @@ public class PlayerTimeManager : MonoBehaviour
         isDead = true;
 
         Debug.Log("Temps écoulé ! GAME OVER.");
-        // int finalScore = ScoreManager.instance.CalculateFinalScore(currentTime);
-        // Debug.Log("Score final de la partie : " + finalScore);
+        
         DeathManager deathManager = Object.FindFirstObjectByType<DeathManager>();
         if (deathManager != null)
         {

@@ -7308,7 +7308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dbf6884327a92fcea4550ccb1fc1bc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTimeManager
-  currentTime: 20
+  currentTime: 120
   isDead: 0
   dangerVignette: {fileID: 1510644873}
   dangerTimeThreshold: 10
@@ -7496,7 +7496,7 @@ MonoBehaviour:
   currentSlot: 1
   switchTime: 1
   switchTimer: 0
-  switchCooldown: 3
+  switchCooldown: 1
   switchBuffer: 0.1
   switchCdTimer: 0
   canSwitch: 1
