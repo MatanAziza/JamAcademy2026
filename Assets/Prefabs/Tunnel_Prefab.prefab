@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2093637950428003362}
   - component: {fileID: 3071950872142852999}
   - component: {fileID: 956227959320364877}
-  - component: {fileID: 4985949235297978144}
-  - component: {fileID: 8456313914433245678}
-  - component: {fileID: 1138964657491743937}
+  - component: {fileID: 1262768049543565752}
+  - component: {fileID: 144779124243535487}
+  - component: {fileID: 6783506247961699946}
   m_Layer: 0
   m_Name: Tunnel_Prefab
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1604908963751126680}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.034, y: -0.117, z: -0.223}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -93,7 +93,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4985949235297978144
+--- !u!65 &1262768049543565752
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,9 +112,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.502674, y: 6.0000024, z: 0.258326}
-  m_Center: {x: 0, y: 5.4121983e-15, z: 2.3808491}
---- !u!65 &8456313914433245678
+  m_Size: {x: 0.026168585, y: 0.60000026, z: 0.2504825}
+  m_Center: {x: 0.11286771, y: 1.079967e-17, z: 0.12575993}
+--- !u!65 &144779124243535487
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,9 +133,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.2527809, y: 6.0000024, z: 2.2399507}
-  m_Center: {x: -1.1249466, y: 1.7786642e-15, z: 1.1251621}
---- !u!65 &1138964657491743937
+  m_Size: {x: 0.028101206, y: 0.60000026, z: 0.2504825}
+  m_Center: {x: -0.11361015, y: 1.079967e-17, z: 0.12575993}
+--- !u!65 &6783506247961699946
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,5 +154,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.26525307, y: 6.0000024, z: 2.256102}
-  m_Center: {x: 1.1187105, y: 1.893427e-15, z: 1.1332378}
+  m_Size: {x: 0.25058526, y: 0.60000026, z: 0.025968993}
+  m_Center: {x: 0.00015893579, y: -1.7029195e-16, z: 0.23801671}

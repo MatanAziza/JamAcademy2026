@@ -49,13 +49,13 @@ namespace StarterAssets
                 Debug.Log("Item récupéré");
                 Inventory inv = other.GetComponent<Inventory>();
                 //-----------------------------------------
-                // Collider trigger = GetComponent<Collider>();
-                // trigger.enabled = false;
-                // inv.item2 = gettableWeapon;
-                // inv.item2.transform.localPosition = new Vector3(inv.xTranslation, inv.yTranslation, inv.zTranslation);
-                // inv.ShowItem(2);
-                // inv.currentSlot = 2;
-                // Destroy(this.gameObject);
+                Collider trigger = GetComponent<Collider>();
+                trigger.enabled = false;
+                inv.item2 = gettableWeapon;
+                inv.item2.transform.localPosition = new Vector3(inv.xTranslation, inv.yTranslation, inv.zTranslation);
+                inv.ShowItem(2);
+                inv.currentSlot = 2;
+                Destroy(this.gameObject);
                 //-----------------------------------------
                 InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
                 if (uiManager != null)
