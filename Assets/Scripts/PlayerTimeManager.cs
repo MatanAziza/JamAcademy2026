@@ -1,161 +1,118 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class PlayerTimeManager : MonoBehaviour
 {
-    [Header("Paramètres de Temps")]
-    public float currentTime = 60f; // Le joueur commence avec 60 secondes (à équilibrer)
+    [Header("État du Jeu")]
+    public bool gameStarted = false; 
     public bool isDead = false;
 
-    private Animator _animator;
-    private CharacterController _controller;
+    [Header("Paramètres de Temps")]
+    public float currentTime = 120f;
+    public Text timerText; 
 
-    [Header("Effet de Danger Visuel")]
-    public UnityEngine.UI.Image dangerVignette;
+    [Header("Effet de Danger (Rouge)")]
+    public Image dangerVignette;
     public float dangerTimeThreshold = 10f;
     public float pulseSpeed = 5f;
     public float maxAlpha = 0.5f;
 
-    [Header("Menus (pour bloquer l'effet rouge)")]
+    [Header("Menus")]
     public GameObject pauseMenuPanel;
     public GameObject helperMessagePanel;
+
+    private Animator _animator;
+
+    void Awake()
+    {
+        if (transform.parent == null) DontDestroyOnLoad(gameObject);
+    }
 
     void OnEnable() { SceneManager.sceneLoaded += OnLevelFinishedLoading; }
     void OnDisable() { SceneManager.sceneLoaded -= OnLevelFinishedLoading; }
 
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        // On retrouve la vignette de danger
-        GameObject vignetteObj = GameObject.Find("DangerVignette");
-        if (vignetteObj != null) 
+        GameObject canvas = GameObject.Find("GameCanvas");
+        if (canvas != null)
         {
-            dangerVignette = vignetteObj.GetComponent<UnityEngine.UI.Image>();
+            Transform v = canvas.transform.Find("DangerVignette");
+            if (v != null) dangerVignette = v.GetComponent<Image>();
+
+            Transform t = canvas.transform.Find("TimerText");
+            if (t != null) timerText = t.GetComponent<Text>();
+
+            Transform p = canvas.transform.Find("PauseMenuPanel");
+            if (p != null) pauseMenuPanel = p.gameObject;
+
+            Transform h = canvas.transform.Find("HelperMessagePanel");
+            if (h != null) helperMessagePanel = h.gameObject;
         }
-
-        // On reconnecte les panneaux de blocage (Pause, etc.)
-        pauseMenuPanel = GameObject.Find("PauseMenuPanel");
-        helperMessagePanel = GameObject.Find("HelperMessagePanel");
+        if (dangerVignette != null) dangerVignette.color = new Color(1, 0, 0, 0);
     }
 
-    void Start()
-    {
-        // On récupère les composants du joueur
-        _animator = GetComponent<Animator>();
-        _controller = GetComponent<CharacterController>();
-    }
+    void Start() { _animator = GetComponent<Animator>(); }
 
     void Update()
     {
-        // --- GESTION DE L'EFFET DE DANGER ---
-        if (dangerVignette != null)
-        {
-            // On vérifie si un des menus est actuellement allumé à l'écran
-            bool isMenuOpen = false;
-            if (pauseMenuPanel != null && pauseMenuPanel.activeInHierarchy) isMenuOpen = true;
-            if (helperMessagePanel != null && helperMessagePanel.activeInHierarchy) isMenuOpen = true;
+        if (!gameStarted || isDead) return;
 
-            if (currentTime <= dangerTimeThreshold && !isDead && Time.timeScale > 0f && !isMenuOpen)
-            {
-                // Mathf.Sin crée une vague entre -1 et 1. On la remet entre 0 et 1.
-                float pulse = (Mathf.Sin(Time.unscaledTime * pulseSpeed) + 1f) / 2f;
-                
-                // On applique la couleur rouge avec l'alpha qui pulse (limité par maxAlpha)
-                dangerVignette.color = new Color(1f, 0f, 0f, pulse * maxAlpha);
-            }
-            else
-            {
-                // On s'assure que l'effet est totalement invisible si tout va bien (ou si un menu est ouvert)
-                dangerVignette.color = new Color(1f, 0f, 0f, 0f);
-            }
+        if (Time.timeScale > 0) currentTime -= Time.deltaTime;
+
+        if (timerText != null) timerText.text = Mathf.Ceil(currentTime).ToString() + "s";
+
+        if (currentTime <= 0) { currentTime = 0; Die(); }
+
+        HandleRedEffect();
+    }
+
+    // --- RÉPARATION DES FONCTIONS DE COMBAT ---
+
+    public void AddTimeReward(float amount) 
+    { 
+        if (!isDead) currentTime += amount; 
+    }
+
+    // Cette fonction doit accepter un argument et renvoyer un booléen
+    public bool TryUseWeapon(float cost = 0f) 
+    {
+        if (isDead || !gameStarted) return false;
+
+        // Si tu veux que tirer coûte du temps, on le soustrait ici
+        if (currentTime > cost)
+        {
+            currentTime -= cost;
+            return true; // Autorise le tir
         }
 
-        if (isDead) return;
+        return false; // Pas assez de temps pour tirer
+    }
 
-        // Le temps s'écoule naturellement (1 seconde par seconde)
-        currentTime -= Time.deltaTime;
+    public void TakeDamage(float amount) { if(!isDead) currentTime -= amount; }
 
-        // Si le temps tombe à zéro ou en dessous, c'est la mort
-        if (currentTime <= 0f)
+    // ------------------------------------------
+
+    void HandleRedEffect()
+    {
+        if (dangerVignette == null) return;
+        bool isMenuOpen = (pauseMenuPanel != null && pauseMenuPanel.activeInHierarchy) || 
+                          (helperMessagePanel != null && helperMessagePanel.activeInHierarchy);
+
+        if (currentTime <= dangerTimeThreshold && !isMenuOpen && Time.timeScale > 0)
         {
-            currentTime = 0f;
-            Die();
+            float pulse = (Mathf.Sin(Time.unscaledTime * pulseSpeed) + 1f) / 2f;
+            dangerVignette.color = new Color(1f, 0f, 0f, pulse * maxAlpha);
         }
+        else dangerVignette.color = new Color(1f, 0f, 0f, 0f);
     }
 
-    // --- FONCTIONS APPELÉES PAR LES ENNEMIS ET LES ARMES ---
-
-    // Quand l'ennemi nous touche
-    public void TakeDamage(float timeLost = 10f)
-    {
-        ScoreManager.instance.AddHitReceived();
-        if (isDead) return;
-        
-        Debug.Log("Le joueur a été touché ! -" + timeLost + " secondes !");
-        ModifyTime(-timeLost);
-    }
-
-    // Quand le joueur veut tirer (Vérifie s'il a assez de temps)
-    public bool TryUseWeapon(float timeCost)
-    {
-        if (isDead) return false;
-
-        ModifyTime(-timeCost);
-        return true; // Le tir est autorisé
-    }
-
-    // Quand le joueur tue un ennemi
-    public void AddTimeReward(float timeReward)
-    {
-        if (isDead) return;
-
-        Debug.Log("Ennemi éliminé ! +" + timeReward + " secondes !");
-        ModifyTime(timeReward);
-    }
-
-    // --- LOGIQUE INTERNE ---
-
-    private void ModifyTime(float amount)
-    {
-        currentTime += amount;
-
-        // On revérifie si une attaque ou un coût en temps nous a tué
-        if (currentTime <= 0f)
-        {
-            currentTime = 0f;
-            Object.FindFirstObjectByType<PauseMenuManager>().TriggerDeath();
-            Die();
-        }
-    }
-
-    private void Die()
+    void Die()
     {
         if (isDead) return;
         isDead = true;
-
-        Debug.Log("Temps écoulé ! GAME OVER.");
-        
-        DeathManager deathManager = Object.FindFirstObjectByType<DeathManager>();
-        if (deathManager != null)
-        {
-            deathManager.TriggerDeath();
-        }
-
-        if (_animator != null)
-        {
-            _animator.SetTrigger("Death");
-        }
-
-        // 1. On "éteint" le cerveau (le script de déplacement) pour arrêter les calculs inutiles
-        StarterAssets.ThirdPersonController movementScript = GetComponent<StarterAssets.ThirdPersonController>();
-        if (movementScript != null)
-        {
-            movementScript.enabled = false;
-        }
-
-        // 2. On éteint le corps physique
-        if (_controller != null)
-        {
-            _controller.enabled = false;
-        }
+        DeathManager dm = Object.FindFirstObjectByType<DeathManager>();
+        if (dm != null) dm.TriggerDeath();
+        if (_animator != null) _animator.SetTrigger("Death");
     }
 }
