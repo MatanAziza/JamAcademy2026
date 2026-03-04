@@ -151,6 +151,7 @@ namespace StarterAssets
         private int run = Animator.StringToHash("anims.Run");
         private int dash = Animator.StringToHash("anims.Dash");
         private int idle = Animator.StringToHash("anims.Idle");
+        private int spec = Animator.StringToHash("anims.Special");
 
         private void Update()
         {
@@ -163,6 +164,7 @@ namespace StarterAssets
             }
             if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
                 Debug.Log("Je special");
+                _animator.Play(spec);
                 Special();
             }
             if (_input.jump != lastDashState && canDash && !isDashing && !isAttacking && !isSpecialing){
@@ -223,8 +225,11 @@ namespace StarterAssets
             if (!isDashing && _input.move != Vector2.zero){
                 Move();
             }
-            if (!isDashing && canDash    && !isAttacking && !isSpecialing){
-                _animator.Play(idle);
+            if (!isDashing && canDash && !isAttacking && !isSpecialing){
+                if (_input.move != Vector2.zero)
+                    _animator.Play(run);
+                else
+                    _animator.Play(idle);
             }
             lastAtkState = _input.attack;
             lastSpcState = _input.special;
