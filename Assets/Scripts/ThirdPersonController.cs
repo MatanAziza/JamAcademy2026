@@ -148,14 +148,19 @@ namespace StarterAssets
 
         private void Update()
         {
-            if (_mainCamera == null)
+            _animator = GetComponentInChildren<Animator>();
+            _hasAnimator = _animator != null;
+
+            if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing)
             {
-                _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            }
-            _hasAnimator = TryGetComponent(out _animator);
-            if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing){
                 Debug.Log("J'attaque");
-                Attack();
+    
+                if (_hasAnimator) 
+                {
+                    _animator.Play(atk);
+                }
+    
+                    Attack();
             }
             if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
                 Debug.Log("Je special");
