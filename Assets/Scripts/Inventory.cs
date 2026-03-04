@@ -24,7 +24,7 @@ public class Inventory : MonoBehaviour
     public int currentSlot = 1;
     public float switchTime = 1f;
     public float switchTimer = 0f;
-    public float switchCooldown = 3f;
+    public float switchCooldown = 1f;
     public float switchBuffer = 0.1f;
     public float switchCdTimer;
     public bool canSwitch = true;
@@ -54,7 +54,7 @@ public class Inventory : MonoBehaviour
                     switchCdTimer = 0f;
                 }
             }
-        if (switchCdTimer != 0f && switchCdTimer < switchCooldown - switchBuffer){
+        if (switchCdTimer != 0f && switchCdTimer < switchCooldown ){
             _input.switch_item = false;
         }
         if (_input.switch_item != lastSwitch_state && currentSlot == 2 && canSwitch && !player.isDashing && !player.isAttacking)

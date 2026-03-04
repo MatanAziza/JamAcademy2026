@@ -33,6 +33,7 @@ public class EnemyHealth : MonoBehaviour
         {
             timeManager.AddTimeReward(timeGained);
         }
+        ScoreManager.instance.AddEnemyKill();
         Destroy(gameObject);
     }
 }
