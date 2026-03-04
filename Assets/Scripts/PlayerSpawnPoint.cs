@@ -4,20 +4,19 @@ public class PlayerSpawnPoint : MonoBehaviour
 {
     void Start()
     {
-        // 1. On cherche le vrai joueur (celui qui a survécu avec le Tag "Player")
+        // On cherche le VRAI Joueur qui vient d'arriver de la Scène 1
         GameObject realPlayer = GameObject.FindGameObjectWithTag("Player");
 
         if (realPlayer != null)
         {
-            // 2. On le met "au frigo" (invisible et inactif) le temps de la cinématique
-            // Comme ça, c'est le faux joueur (l'acteur) qu'on verra à l'écran.
+            // LA LIGNE MAGIQUE : On le met "au frigo" instantanément !
             realPlayer.SetActive(false);
             
-            Debug.Log("Vrai joueur caché. Place à la cinématique !");
-        }
-        else
-        {
-            Debug.LogWarning("Aucun vrai joueur trouvé par le SpawnPoint.");
+            // (Optionnel mais recommandé) On le place au SpawnPoint pour éviter qu'il tombe dans le vide pendant qu'il est éteint
+            realPlayer.transform.position = transform.position;
+            realPlayer.transform.rotation = transform.rotation;
+            
+            Debug.Log("Le Vrai Joueur est caché. La cinématique peut commencer !");
         }
     }
 }
