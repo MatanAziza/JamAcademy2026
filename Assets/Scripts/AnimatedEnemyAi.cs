@@ -55,7 +55,7 @@ public class AnimatedEnemyAI : MonoBehaviour
 
     private void Start()
     {
-        targetPlayer = GameObject.Find("PlayerArmature").GetComponent<Transform>();
+        targetPlayer = GameObject.Find("Armature").GetComponent<Transform>();
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _agent = GetComponent<NavMeshAgent>();
