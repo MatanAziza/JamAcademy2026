@@ -14,31 +14,28 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        // 1. ON LIBÈRE LA SOURIS (Pour pouvoir cliquer sur les boutons sans attaquer)
+        // 1. ON LIBÈRE LA SOURIS
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
         if (settingsPanel != null) settingsPanel.SetActive(false);
 
-        // 2. ON NETHOYAGE LE JOUEUR EN ARRIÈRE-PLAN
+        // 2. ON NEUTRALISE LE JOUEUR EN ARRIÈRE-PLAN
         NeutralizePlayer();
     }
 
     private void NeutralizePlayer()
     {
-        // On cherche le PlayerTimeManager qu'on vient de créer
         PlayerTimeManager ptm = Object.FindFirstObjectByType<PlayerTimeManager>();
         if (ptm != null)
         {
-            ptm.gameStarted = false; // Bloque le chrono et les fonctions de tir
+            ptm.gameStarted = false; 
         }
 
-        // On cherche le contrôleur de mouvement pour éviter qu'il tourne la tête ou saute
         ThirdPersonController controller = Object.FindFirstObjectByType<ThirdPersonController>();
         if (controller != null)
         {
-            // On désactive le script pour qu'il ne lise plus les clics de souris
             controller.enabled = false; 
         }
     }
@@ -46,12 +43,22 @@ public class MainMenuManager : MonoBehaviour
     // --- FONCTIONS DE JEU ---
     public void PlayGame()
     {
+        Time.timeScale = 1f; // Sécurité
         SceneManager.LoadScene(gameSceneName);
     }
 
     public void PlayTutorial()
     {
+        Time.timeScale = 1f; // Sécurité
         SceneManager.LoadScene(tutorialSceneName);
+    }
+
+    // --- NOUVELLE FONCTION : CHOIX DU NIVEAU DIRECT ---
+    // Utilise ça sur tes nouveaux boutons de menu !
+    public void LoadLevel(string levelName)
+    {
+        Time.timeScale = 1f; // Sécurité cruciale
+        SceneManager.LoadScene(levelName);
     }
 
     // --- FONCTIONS DES PARAMÈTRES ---
