@@ -112,6 +112,8 @@ namespace StarterAssets
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
+
+            AssignAnimationIDs();
         }
         
         private bool lastDashState = false;
@@ -143,19 +145,16 @@ namespace StarterAssets
         private bool canAttack = true;
         public bool isSpecialing = false;
         private bool canSpecial = true;
-        private int _currentState;
-
-        private static readonly int Idle = Animator.StringToHash("Idle");
-        private static readonly int run = Animator.StringToHash("Run");
-        private static readonly int atk = Animator.StringToHash("Attack");
-        private static readonly int dash = Animator.StringToHash("dDsh");
-        private float _lockedTill;
 
         private void Update()
-        {_hasAnimator = TryGetComponent(out _animator);
+        {
+            if (_mainCamera == null)
+            {
+                _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            }
+            _hasAnimator = TryGetComponent(out _animator);
             if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing){
                 Debug.Log("J'attaque");
-                _animator.Play(atk);
                 Attack();
             }
             if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
@@ -164,7 +163,6 @@ namespace StarterAssets
             }
             if (_input.jump != lastDashState && canDash && !isDashing && !isAttacking && !isSpecialing){
                 Debug.Log("Je dash");
-                _animator.Play(dash);
                 StartDash();
             }
             if (isAttacking)
@@ -210,39 +208,20 @@ namespace StarterAssets
                 specialTimer += Time.deltaTime;
             if (!isDashing && !canDash && dashTimer + dashDuration < dashCooldown)
                 dashTimer += Time.deltaTime;
-            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown)
+            if (!isAttacking && !canAttack && attackTimer + attackDuration >= attackCooldown){
                 canAttack = true;
+                Debug.Log("merde");}
             if (!isSpecialing && !canSpecial && specialTimer + specialDuration >= specialCooldown)
                 canSpecial = true;
             if (!isDashing && !canDash && dashTimer + dashDuration >= dashCooldown)
                 canDash =true;
             if (!isDashing){
-                _animator.Play(run);
                 Move();
             }
-            else {
-                _animator.Play(Idle);
-            }
-
             lastAtkState = _input.attack;
             lastSpcState = _input.special;
             lastDashState = _input.jump;
         }
-        private int GetState() {
-            if (Time.time < _lockedTill) return _currentState;
-
-            if (isAttacking) return LockState(atk, attackDuration);
-            if (isDashing) return LockState(dash, dashDuration);
-            if (_input.move != Vector2.zero)
-                return run;
-            return Idle;
-
-            int LockState(int s, float t){
-                _lockedTill = Time.time + t;
-                return s;
-            }
-        }
-
         private void Special(){
             if (_timeManager != null && !_timeManager.TryUseWeapon(specialTimeCost)) return;
             isSpecialing = true;
@@ -333,7 +312,19 @@ namespace StarterAssets
 
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime));
 
+            if (_hasAnimator)
+            {
+                _animator.SetFloat(_animIDSpeed, _animationBlend);
+                _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+            }
         }
+
+        private void AssignAnimationIDs()
+        {
+            _animIDSpeed = Animator.StringToHash("Speed");
+            _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        }
+
         private void OnLand(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
