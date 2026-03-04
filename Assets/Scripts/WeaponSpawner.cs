@@ -43,6 +43,7 @@ namespace StarterAssets
             // Collecte seulement si pas déjà collecté
             if (playerInput.interact && GetComponent<Collider>().enabled )
             {
+                playerInput.interact = false; // consumming input as a one-use token
                 isInteracting = true;
                 GameObject gettableWeapon = weapons[Random.Range(0, weapons.Length)];
                 Debug.Log("Item récupéré");
@@ -56,22 +57,22 @@ namespace StarterAssets
                 inv.currentSlot = 2;
                 Destroy(this.gameObject);
                 //-----------------------------------------
-                // InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
-                // if (uiManager != null)
-                // {
-                //     // On désactive le collider pour éviter que le joueur spamme la touche
-                //     GetComponent<Collider>().enabled = false;
+                InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
+                if (uiManager != null)
+                {
+                    // On désactive le collider pour éviter que le joueur spamme la touche
+                    GetComponent<Collider>().enabled = false;
                     
-                    // On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
-                //     uiManager.OpenLootWindow(gettableWeapon, this, inv);
-                // }
-                // else
-                // {
-                //     // Si tu vois ça dans la console, c'est que le script InventoryUIManager n'est pas sur un objet de la scène !
-                //     Debug.LogError("CRITIQUE : InventoryUIManager est introuvable dans la scène !"); 
-                // }
-                // rotationSpeed = 0f;
-                // isInteracting = false;
+                    //On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
+                    uiManager.OpenLootWindow(gettableWeapon, this, inv);
+                }
+                else
+                {
+                    // Si tu vois ça dans la console, c'est que le script InventoryUIManager n'est pas sur un objet de la scène !
+                    Debug.LogError("CRITIQUE : InventoryUIManager est introuvable dans la scène !"); 
+                }
+                rotationSpeed = 0f;
+                isInteracting = false;
             }
         }
     }

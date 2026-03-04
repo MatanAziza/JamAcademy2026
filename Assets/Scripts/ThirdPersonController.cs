@@ -32,6 +32,23 @@ namespace StarterAssets
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
 
+        [Header("Combat Settings")]
+        public Transform attackPoint; // L'origine de l'attaque
+        public float attackRange = 1.5f; // Rayon de la zone d'impact
+        public LayerMask enemyLayers; // Filtre pour ne toucher que les ennemis
+        
+        public int attackDamage = 35;
+        public int specialDamage = 75;
+        
+        public float timeRewardNormal = 6f; // Temps gagné (attaque normale)
+        public float timeRewardSpecial = 12f; // Temps gagné (attaque spéciale)
+        
+        [Header("Coûts en Temps")]
+        public float attackTimeCost = 0f;  // L'attaque normale coûte 1 sec
+        public float specialTimeCost = 5f; // L'attaque spéciale coûte 3 sec
+        
+        private PlayerTimeManager _timeManager; // Le lien vers ton chrono
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -91,6 +108,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
             _inventory = GetComponent<Inventory>();
+            _timeManager = GetComponent<PlayerTimeManager>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -201,12 +219,14 @@ namespace StarterAssets
             lastDashState = _input.jump;
         }
         private void Special(){
+            if (_timeManager != null && !_timeManager.TryUseWeapon(specialTimeCost)) return;
             isSpecialing = true;
             canSpecial = false;
             specialTimer = 0f;
             _inventory.canSwitch = false;
             //animation
             SprintSpeed /= superSlowSpeed;
+            PerformHitDetection(specialDamage, timeRewardSpecial);
         }
 
         private void Attack() {
@@ -216,6 +236,24 @@ namespace StarterAssets
             _inventory.canSwitch = false;
             //animation
             SprintSpeed /= slowSpeed;
+            PerformHitDetection(attackDamage, timeRewardNormal);
+        }
+
+        private void PerformHitDetection(int damage, float timeReward)
+        {
+            if (attackPoint == null) return; 
+
+            // Crée une bulle invisible et chope tout ce qui est dans "enemyLayers"
+            Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
+
+            foreach (Collider enemy in hitEnemies)
+            {
+                EnemyHealth health = enemy.GetComponent<EnemyHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage, timeReward);
+                }
+            }
         }
 
         private void StartDash() {
@@ -289,6 +327,13 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (attackPoint == null) return;
+            Gizmos.color = new Color(1, 0, 0, 0.5f); // Rouge un peu transparent
+            Gizmos.DrawSphere(attackPoint.position, attackRange);
         }
     }
 }
