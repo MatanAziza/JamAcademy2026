@@ -152,11 +152,20 @@ namespace StarterAssets
         private float _lockedTill;
 
         private void Update()
-        {_hasAnimator = TryGetComponent(out _animator);
-            if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing){
+        {
+            _animator = GetComponentInChildren<Animator>();
+            _hasAnimator = _animator != null;
+
+            if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing)
+            {
                 Debug.Log("J'attaque");
-                _animator.Play(atk);
-                Attack();
+    
+                if (_hasAnimator) 
+                {
+                    _animator.Play(atk);
+                }
+    
+                    Attack();
             }
             if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
                 Debug.Log("Je special");

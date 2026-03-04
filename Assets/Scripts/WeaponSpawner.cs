@@ -57,7 +57,7 @@ namespace StarterAssets
                 inv.currentSlot = 2;
                 Destroy(this.gameObject);
                 //-----------------------------------------
-                // InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
+                InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
                 // if (uiManager != null)
                 // {
                 //     // On désactive le collider pour éviter que le joueur spamme la touche
@@ -76,4 +76,3 @@ namespace StarterAssets
             }
         }
     }
-}
