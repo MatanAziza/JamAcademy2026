@@ -2039,16 +2039,33 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   FootstepAudioVolume: 0.3
   CinemachineCameraTarget: {fileID: 4427202676320773015}
+  attackPoint: {fileID: 0}
+  attackRange: 1.5
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  attackDamage: 35
+  specialDamage: 75
+  timeRewardNormal: 6
+  timeRewardSpecial: 12
+  attackTimeCost: 0
+  specialTimeCost: 5
   dashSpeed: 22
   dashDuration: 0.15
   dashCooldown: 1
   dashBuffer: 0.2
-  isDashing: 0
+  slowSpeed: 4
   attackDuration: 1
   attackCooldown: 0
   attackBuffer: 0.3
+  superSlowSpeed: 6
+  specialDuration: 2
+  specialCooldown: 1.2
+  specialTimer: 0
+  specialBuffer: 0.1
+  isDashing: 0
   isAttacking: 0
-  slowSpeed: 4
+  isSpecialing: 0
 --- !u!114 &7851763257925847826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2081,6 +2098,7 @@ MonoBehaviour:
   move: {x: 0, y: 0}
   look: {x: 0, y: 0}
   attack: 0
+  special: 0
   jump: 0
   sprint: 0
   switch_item: 0
