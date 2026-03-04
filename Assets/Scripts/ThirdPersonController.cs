@@ -102,7 +102,8 @@ namespace StarterAssets
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
-            _hasAnimator = TryGetComponent(out _animator);
+            _animator = this.gameObject.GetComponentInChildren<Animator>();
+            Debug.Log(_animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM 
@@ -146,21 +147,19 @@ namespace StarterAssets
         public bool isSpecialing = false;
         private bool canSpecial = true;
 
+        private int atk = Animator.StringToHash("anims.Attack");
+        private int run = Animator.StringToHash("anims.Run");
+        private int dash = Animator.StringToHash("anims.Dash");
+        private int idle = Animator.StringToHash("anims.Idle");
+
         private void Update()
         {
-            _animator = GetComponentInChildren<Animator>();
-            _hasAnimator = _animator != null;
 
             if (_input.attack != lastAtkState && canAttack && !isAttacking && !isSpecialing && !isDashing)
             {
                 Debug.Log("J'attaque");
-    
-                if (_hasAnimator) 
-                {
-                    _animator.Play(atk);
-                }
-    
-                    Attack();
+                _animator.Play(atk);
+                Attack();
             }
             if (_input.special != lastSpcState && canSpecial && !isSpecialing && !isAttacking && !isDashing){
                 Debug.Log("Je special");
@@ -168,6 +167,7 @@ namespace StarterAssets
             }
             if (_input.jump != lastDashState && canDash && !isDashing && !isAttacking && !isSpecialing){
                 Debug.Log("Je dash");
+                _animator.Play(dash);
                 StartDash();
             }
             if (isAttacking)
@@ -220,8 +220,11 @@ namespace StarterAssets
                 canSpecial = true;
             if (!isDashing && !canDash && dashTimer + dashDuration >= dashCooldown)
                 canDash =true;
-            if (!isDashing){
+            if (!isDashing && _input.move != Vector2.zero){
                 Move();
+            }
+            if (!isDashing && canDash    && !isAttacking && !isSpecialing){
+                _animator.Play(idle);
             }
             lastAtkState = _input.attack;
             lastSpcState = _input.special;
