@@ -1,30 +1,54 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // OBLIGATOIRE pour changer de scène
+using UnityEngine.SceneManagement; 
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("Configuration")]
-    [Tooltip("Le nom exact de ta scène de jeu (attention aux majuscules)")]
+    [Header("Configuration des Scènes")]
     public string gameSceneName = "Level_01"; 
+    public string tutorialSceneName = "Tutorial_Level"; // <-- Ajout pour le tuto
 
-    // --- FONCTION JOUER ---
+    [Header("Panneaux UI")]
+    public GameObject mainMenuPanel; // Le conteneur de tes boutons Jouer/Tuto/Quitter
+    public GameObject settingsPanel; // Le conteneur de tes paramètres (Rebind, volume...)
+
+    private void Start()
+    {
+        // Au lancement, on force l'affichage du menu principal et on cache les paramètres
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+    }
+
+    // --- FONCTIONS DE JEU ---
     public void PlayGame()
     {
-        Debug.Log("Lancement du jeu...");
-        // Recharge le temps normal au cas où on aurait quitté le jeu en pause (Time.timeScale = 0)
         Time.timeScale = 1f; 
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void PlayTutorial()
+    {
+        Time.timeScale = 1f; 
+        SceneManager.LoadScene(tutorialSceneName);
+    }
+
+    // --- FONCTIONS DES PARAMÈTRES ---
+    public void OpenSettings()
+    {
+        mainMenuPanel.SetActive(false); // On cache l'accueil
+        settingsPanel.SetActive(true);  // On affiche les paramètres
+    }
+
+    public void CloseSettings()
+    {
+        settingsPanel.SetActive(false); // On cache les paramètres
+        mainMenuPanel.SetActive(true);  // On réaffiche l'accueil
     }
 
     // --- FONCTION QUITTER ---
     public void QuitGame()
     {
         Debug.Log("Fermeture du jeu !");
-        
-        // Ferme le vrai jeu une fois compilé
         Application.Quit(); 
-
-        // Ligne magique qui arrête le mode "Play" directement dans l'éditeur Unity pour tester
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
