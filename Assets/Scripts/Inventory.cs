@@ -87,6 +87,7 @@ public class Inventory : MonoBehaviour
 
         if (itemToShow != null)
         {
+            Destroy(currentItem);
             currentItem = Instantiate(itemToShow, hand);
             currentItem.transform.localPosition = new Vector3(xTranslation, yTranslation, zTranslation);
             
