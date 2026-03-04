@@ -43,6 +43,7 @@ namespace StarterAssets
             // Collecte seulement si pas déjà collecté
             if (playerInput.interact && GetComponent<Collider>().enabled )
             {
+                playerInput.interact = false; // consumming input as a one-use token
                 isInteracting = true;
                 GameObject gettableWeapon = weapons[Random.Range(0, weapons.Length)];
                 Debug.Log("Item récupéré");
@@ -57,12 +58,12 @@ namespace StarterAssets
                 // Destroy(this.gameObject);
                 //-----------------------------------------
                 InventoryUIManager uiManager = Object.FindFirstObjectByType<InventoryUIManager>();
-                // if (uiManager != null)
-                // {
-                //     // On désactive le collider pour éviter que le joueur spamme la touche
-                //     GetComponent<Collider>().enabled = false;
+                if (uiManager != null)
+                {
+                    // On désactive le collider pour éviter que le joueur spamme la touche
+                    GetComponent<Collider>().enabled = false;
                     
-                    // On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
+                    //On envoie l'arme tirée au hasard dans un "3ème slot" (buffer)
                     uiManager.OpenLootWindow(gettableWeapon, this, inv);
                 }
                 else
